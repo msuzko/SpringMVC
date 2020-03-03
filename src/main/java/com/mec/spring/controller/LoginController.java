@@ -44,17 +44,17 @@ public class LoginController {
         return new ModelAndView("login-failed", "message", "Login failed!");
     }
 
-    @RequestMapping(value = "/get-json-user{name}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/get-json-user/{name}/{admin}", method = RequestMethod.GET, produces = "application/xml")
     @ResponseBody
-    public User getUser(@RequestParam("name") String name) {
+    public User getUser(@PathVariable("name") String name, @PathVariable("admin") boolean admin) {
         User user = new User();
         user.setName(name);
-        return user;
+        user.setAdmin(admin);        return user;
     }
 
     @RequestMapping(value = "/put-json-user", method = RequestMethod.POST, consumes = "application/json")
     public ResponseEntity<String> setJsonUser(@RequestBody User user) {
         logger.info(user.getName());
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
