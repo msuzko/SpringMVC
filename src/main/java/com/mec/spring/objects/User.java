@@ -5,6 +5,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class User {
+
+    public User() {
+    }
+
+    public User(String name) {
+        super();
+        this.name = name;
+    }
     @Size(min=6, message = "{name.size.error}")
     private String name;
 
