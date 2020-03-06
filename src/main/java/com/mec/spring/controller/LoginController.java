@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -28,7 +29,7 @@ public class LoginController {
 
     public static final String LOGIN = "login";
     public static final String MAIN = "main";
-    public static final String MAINPAGE = "/mainpage";
+    public static final String MAINPAGE = "mainpage";
 
     @Autowired
     private MessageSource messageSource;
@@ -47,15 +48,20 @@ public class LoginController {
     }
 
     @RequestMapping(value = "/check-user", method = RequestMethod.POST)
-    public String checkUser(Locale locale, @Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+    public ModelAndView checkUser(Locale locale, @Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
+        ModelAndView modelAndView = new ModelAndView();
         if (!bindingResult.hasErrors()) {
+            RedirectView redirectView = new RedirectView(MAINPAGE);
+            redirectView.setStatusCode(HttpStatus.MOVED_PERMANENTLY);
+            modelAndView.setView(redirectView);
+            redirectAttributes.addFlashAttribute("redirect", true);
             redirectAttributes.addFlashAttribute("locale", messageSource.getMessage("locale", new String[]{locale.getDisplayName(locale)}, locale));
-            return "redirect:"+ MAINPAGE;
-        }
-        return LOGIN;
+        } else
+            modelAndView.setViewName(LOGIN);
+        return modelAndView;
     }
 
-    @RequestMapping(value = MAINPAGE, method = RequestMethod.GET)
+    @RequestMapping(value = "/"+MAINPAGE, method = RequestMethod.GET)
     public String goMainPage(HttpServletRequest request){
         Map<String,?> map = RequestContextUtils.getInputFlashMap(request);
         if (map!=null)
