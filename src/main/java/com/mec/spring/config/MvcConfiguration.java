@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -86,6 +88,13 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     public LocaleResolver sessionLocaleResolver(){
         SessionLocaleResolver resolver = new SessionLocaleResolver();
         resolver.setDefaultLocale(Locale.forLanguageTag("ru"));
+        return resolver;
+    }
+
+    @Bean(name="multipartResolver")
+    public MultipartResolver commonsMultipartResolver(){
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setMaxUploadSize(100000L);
         return resolver;
     }
 

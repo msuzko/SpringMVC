@@ -27,14 +27,14 @@ import java.util.Map;
 @SessionAttributes("user")
 public class LoginController {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
+
     public static final String LOGIN = "login";
     public static final String MAIN = "main";
     public static final String MAINPAGE = "mainpage";
 
     @Autowired
     private MessageSource messageSource;
-
-    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     @ModelAttribute
     public User createNewUser() {
