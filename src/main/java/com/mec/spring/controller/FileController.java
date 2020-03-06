@@ -1,5 +1,6 @@
 package com.mec.spring.controller;
 
+import com.mec.spring.exceptions.BadFileNameException;
 import com.mec.spring.objects.UploadedFile;
 import com.mec.spring.validators.FileValidator;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class FileController {
 
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
     @ResponseBody
-    public ModelAndView uploadFile(@ModelAttribute("uploadedFile") UploadedFile uploadedFile, BindingResult result) {
+    public ModelAndView uploadFile(@ModelAttribute("uploadedFile") UploadedFile uploadedFile, BindingResult result) throws BadFileNameException, IOException {
 
         ModelAndView modelAndView = new ModelAndView();
 
@@ -38,9 +39,11 @@ public class FileController {
             try {
                 copyFile(uploadedFile, getTempDir());
                 redirectView(uploadedFile, modelAndView);
+                //       throw new BadFileNameException("Bad filename: "+uploadedFile.getFileName());
             } catch (IOException e) {
                 modelAndView.setViewName(MAIN);
             }
+        // throw new IOException("Folder not found");
         return modelAndView;
     }
 
@@ -73,6 +76,20 @@ public class FileController {
     @RequestMapping(value = "/" + FILEUPLOADED, method = RequestMethod.GET)
     public String getFilename() {
         return FILEUPLOADED;
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "IOException exception! check arguments!")
+    @ExceptionHandler(IOException.class)
+    public void handleIOException() {
+        logger.error("IOException handler executed");
+    }
+
+    @ExceptionHandler(BadFileNameException.class)
+    public ModelAndView handleBadFileNameException(Exception ex) {
+        logger.error("IOException handler executed");
+        ModelAndView modelAndView = new ModelAndView("error");
+        modelAndView.addObject("error", ex.getMessage());
+        return modelAndView;
     }
 
 
