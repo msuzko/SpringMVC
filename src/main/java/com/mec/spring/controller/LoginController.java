@@ -4,7 +4,6 @@ import com.mec.spring.objects.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +28,17 @@ public class LoginController {
 
     private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
-    public static final String LOGIN = "login";
-    public static final String MAIN = "main";
-    public static final String MAINPAGE = "mainpage";
+    private static final String LOGIN = "login";
+    private static final String MAIN = "main";
+    private static final String MAINPAGE = "mainpage";
+
+    private static final int WEAK_STRENGTH = 1;
+    private static final int FEAR_STRENGTH = 5;
+    private static final int STRONG_STRENGTH = 7;
+    private static final String WEAK_COLOR = "#FF0000";
+    private static final String FEAR_COLOR = "#FF9900";
+    private static final String STRONG_COLOR = "#0099CC";
+
 
     @Autowired
     private MessageSource messageSource;
@@ -61,10 +68,10 @@ public class LoginController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/"+MAINPAGE, method = RequestMethod.GET)
-    public String goMainPage(HttpServletRequest request){
-        Map<String,?> map = RequestContextUtils.getInputFlashMap(request);
-        if (map!=null)
+    @RequestMapping(value = "/" + MAINPAGE, method = RequestMethod.GET)
+    public String goMainPage(HttpServletRequest request) {
+        Map<String, ?> map = RequestContextUtils.getInputFlashMap(request);
+        if (map != null)
             logger.info("redirect!");
         else
             logger.info("update!");
@@ -89,5 +96,18 @@ public class LoginController {
     public ResponseEntity<String> setJsonUser(@RequestBody User user) {
         logger.info(user.getName());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/checkStrength", method = RequestMethod.GET, produces = {"text/html; charset=UTF-8"})
+    public @ResponseBody
+    String checkStrength(@RequestParam String password) {
+        String result = "<span style=\"color:%s; font-weight:bold;\">%s</span>";
+        if (password.length() >= WEAK_STRENGTH & password.length() < FEAR_STRENGTH)
+            return String.format(result,WEAK_COLOR,"Слабый");
+        else if (password.length() >= FEAR_STRENGTH & password.length() < STRONG_STRENGTH)
+            return String.format(result,FEAR_COLOR,"Средний");
+        else if (password.length() >= STRONG_STRENGTH)
+            return String.format(result,STRONG_COLOR,"Сильный");
+        return "";
     }
 }
