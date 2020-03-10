@@ -18,8 +18,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 //servlet-context.xml
 @Configuration
@@ -28,10 +30,19 @@ import java.util.Locale;
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
-    public ViewResolver getViewResolver() {
+    public ViewResolver getIRViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/views/");
         resolver.setSuffix(".jsp");
+        resolver.setOrder(2);
+        return resolver;
+    }
+
+    @Bean
+    public ViewResolver getRBViewResolver() {
+        ResourceBundleViewResolver resolver = new ResourceBundleViewResolver();
+        resolver.setOrder(1);
+        resolver.setBasename("config.views");
         return resolver;
     }
 

@@ -13,6 +13,8 @@
     <p><spring:message code="you.admin"/> ${user.admin}!</p>
     <p>${locale}</p>
 
+    <h3><a href="downloadPDF">Download PDF Document</a></h3>
+
     <form:form
             method="POST"
             action="uploadFile"

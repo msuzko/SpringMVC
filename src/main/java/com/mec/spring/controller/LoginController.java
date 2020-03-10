@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.servlet.view.document.AbstractPdfView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -109,5 +110,10 @@ public class LoginController {
         else if (password.length() >= STRONG_STRENGTH)
             return String.format(result,STRONG_COLOR,"Сильный");
         return "";
+    }
+
+    @RequestMapping(value = "/downloadPDF", method = RequestMethod.GET)
+    public ModelAndView downloadPDF(){
+        return new ModelAndView("pdfView");
     }
 }
